@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Database Insight - Navikaran</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg: #020617;
+            --white: #f8fafc;
+            --muted: #94a3b8;
+            --accent: #3b82f6;
+            --glass: rgba(255, 255, 255, 0.06);
+            --border: rgba(255, 255, 255, 0.1);
+            --red: #f87171;
+            --green: #4ade80;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: #0f172a;
+            /* Solid background instead of gradients */
+            color: var(--white);
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* NAVBAR */
+        .navbar {
+            padding: 18px 34px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #020617;
+            /* Solid background */
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo {
+            text-decoration: none;
+            color: #fff;
+            font-size: 1.35rem;
+            font-weight: 900;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo span {
+            background: linear-gradient(90deg, #60a5fa, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 28px;
+        }
+
+        .nav-links a {
+            color: var(--muted);
+            text-decoration: none;
+            font-weight: 600;
+            transition: .3s ease;
+            font-size: 0.95rem;
+        }
+
+        .nav-links a:hover {
+            color: #fff;
+        }
+
+        .main-container {
+            flex: 1;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+        }
+
+        /* STATS CARDS */
+        .stats-grid-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            width: 100%;
+            max-width: 900px;
+            display: none;
+            /* Hidden initially for fast load */
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.04);
+            padding: 24px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: var(--accent);
+        }
+
+        .load-stats-btn {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--muted);
+            border: 1px solid var(--border);
+            padding: 10px 20px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .load-stats-btn:hover {
+            background: var(--glass);
+            color: #fff;
+            border-color: var(--muted);
+        }
+
+        /* DATE CHECKER SECTION */
+        .check-section {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border);
+            border-radius: 28px;
+            padding: 40px;
+            width: 100%;
+            max-width: 600px;
+            box-shadow: 0 20px 80px rgba(0, 0, 0, 0.45);
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 25px;
+            text-align: center;
+            background: linear-gradient(90deg, #fff, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .date-picker-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--muted);
+        }
+
+        input[type="date"] {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 12px 16px;
+            color: #fff;
+            font-family: inherit;
+            font-size: 1rem;
+            outline: none;
+            transition: .2s;
+        }
+
+        input[type="date"]:focus {
+            border-color: var(--accent);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .check-btn {
+            width: 100%;
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            padding: 16px;
+            border-radius: 14px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: .3s;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+        }
+
+        .check-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.5);
+            background: #2563eb;
+        }
+
+        .check-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* RESULTS AREA */
+        #results {
+            margin-top: 30px;
+            display: none;
+        }
+
+        .result-summary {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-around;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .res-item {
+            text-align: center;
+        }
+
+        .res-val {
+            display: block;
+            font-size: 1.4rem;
+            font-weight: 800;
+        }
+
+        .res-lbl {
+            font-size: 0.7rem;
+            color: var(--muted);
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        .missing-list {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 16px;
+            padding: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid var(--border);
+        }
+
+        .missing-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .missing-list::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 10px;
+        }
+
+        .date-tag {
+            display: inline-block;
+            background: rgba(248, 113, 113, 0.15);
+            color: var(--red);
+            padding: 6px 12px;
+            border-radius: 8px;
+            margin: 5px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border: 1px solid rgba(248, 113, 113, 0.2);
+        }
+
+        .success-msg {
+            color: var(--green);
+            text-align: center;
+            font-weight: 600;
+            padding: 20px;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #1e293b;
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            transition: .4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 1000;
+            border: 1px solid var(--border);
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar">
+        <a href="/" class="logo">
+            <span>Navikaran</span>
+        </a>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/rangewise">Rangewise</a>
+            <a href="/forecast">ETF & NIFTY</a>
+            <a href="/analyzer">Analyzer</a>
+            <a href="/db_info">DB Info</a>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        <!-- Lazy Stats Trigger -->
+        <button class="load-stats-btn" id="load_stats_btn" onclick="loadOverallStats()">📊 Show Overall Database
+            Statistics</button>
+
+        <!-- High Level Stats (Initially Hidden) -->
+        <div class="stats-grid-row" id="stats_row">
+            <div class="stat-card">
+                <div class="stat-label">Total Records</div>
+                <div class="stat-value" id="stat_total">-</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Min Date</div>
+                <div class="stat-value" id="stat_min" style="font-size:1.2rem">-</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Max Date</div>
+                <div class="stat-value" id="stat_max" style="font-size:1.2rem">-</div>
+            </div>
+        </div>
+
+        <!-- Checker UI -->
+        <div class="check-section">
+            <h2>🕵️ Check Missing Data</h2>
+            <div class="date-picker-grid">
+                <div class="input-group">
+                    <label>From Date</label>
+                    <input type="date" id="start_date">
+                </div>
+                <div class="input-group">
+                    <label>To Date</label>
+                    <input type="date" id="end_date">
+                </div>
+            </div>
+            <button class="check-btn" id="check_btn" onclick="checkMissing()">Verify Data Integrity</button>
+
+            <div id="results">
+                <div class="result-summary">
+                    <div class="res-item">
+                        <span class="res-val" id="total_intended">-</span>
+                        <span class="res-lbl">Trading Days</span>
+                    </div>
+                    <div class="res-item">
+                        <span class="res-val" id="total_missing" style="color:var(--red)">-</span>
+                        <span class="res-lbl">Missing</span>
+                    </div>
+                </div>
+                <div id="missing_list_container">
+                    <label style="margin-bottom:10px; display:block;">Missing Dates:</label>
+                    <div class="missing-list" id="missing_list"></div>
+                </div>
+                <div id="success_msg" class="success-msg" style="display:none;">
+                    ✅ All trading data present for this range!
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script>
+        // Set default dates
+        const today = new Date();
+        const lastMonth = new Date();
+        lastMonth.setMonth(today.getMonth() - 1);
+
+        document.getElementById('end_date').valueAsDate = today;
+        document.getElementById('start_date').valueAsDate = lastMonth;
+
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 3000);
+        }
+
+        async function loadOverallStats() {
+            const btn = document.getElementById('load_stats_btn');
+            const row = document.getElementById('stats_row');
+
+            btn.disabled = true;
+            btn.textContent = "⏳ Calculating Statistics...";
+
+            try {
+                const response = await fetch('/api/db/summary');
+                const data = await response.json();
+
+                if (data.error) {
+                    showToast(data.error);
+                } else {
+                    document.getElementById('stat_total').textContent = data.total_records.toLocaleString();
+                    document.getElementById('stat_min').textContent = data.min_date;
+                    document.getElementById('stat_max').textContent = data.max_date;
+                    row.style.display = 'grid';
+                    btn.style.display = 'none'; // Hide button after loading
+                }
+            } catch (err) {
+                showToast("Failed to fetch statistics.");
+            } finally {
+                btn.disabled = false;
+                if (btn.style.display !== 'none') btn.textContent = "📊 Show Overall Database Statistics";
+            }
+        }
+
+        async function checkMissing() {
+            const start = document.getElementById('start_date').value;
+            const end = document.getElementById('end_date').value;
+            const btn = document.getElementById('check_btn');
+            const resDiv = document.getElementById('results');
+
+            if (!start || !end) {
+                showToast("Please select both dates.");
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = "Checking...";
+            resDiv.style.display = 'none';
+
+            try {
+                const response = await fetch('/api/db/check_missing', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ start_date: start, end_date: end })
+                });
+                const data = await response.json();
+
+                if (data.error) {
+                    showToast(data.error);
+                } else {
+                    document.getElementById('total_intended').textContent = data.total_intended;
+                    document.getElementById('total_missing').textContent = data.total_missing;
+
+                    const list = document.getElementById('missing_list');
+                    const container = document.getElementById('missing_list_container');
+                    const success = document.getElementById('success_msg');
+
+                    list.innerHTML = '';
+                    if (data.total_missing > 0) {
+                        data.missing_dates.forEach(date => {
+                            const span = document.createElement('span');
+                            span.className = 'date-tag';
+                            span.textContent = date;
+                            list.appendChild(span);
+                        });
+                        container.style.display = 'block';
+                        success.style.display = 'none';
+                    } else {
+                        container.style.display = 'none';
+                        success.style.display = 'block';
+                    }
+
+                    resDiv.style.display = 'block';
+                }
+            } catch (err) {
+                showToast("Failed to connect to server.");
+            } finally {
+                btn.disabled = false;
+                btn.textContent = "Verify Data Integrity";
+            }
+        }
+    </script>
+</body>
+
+</html>
